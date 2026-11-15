@@ -4,7 +4,7 @@
    - page, css and js: network first (3 s), cached copy as fallback, so a deploy reaches users at once
    - img/*: cache first (bump VERSION when an image changes)
    - Google Fonts: stale while revalidate */
-var VERSION = 'pb-sw-1';
+var VERSION = 'pb-sw-2';
 var SHELL = VERSION + '-shell', FILES = VERSION + '-files';
 var SHELL_URLS = ['./', 'index.html', 'css/app.css', 'js/config.js', 'js/content.js', 'js/app.js', 'js/account.js', 'manifest.webmanifest',
   'img/icon-192.png', 'img/icon-512.png', 'img/favicon-48.png'];

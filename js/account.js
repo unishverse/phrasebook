@@ -335,8 +335,8 @@
     $('menu-login').textContent = me.email ? me.email : '@' + me.username + ' · belum ada email';
     $('menu-add-email').hidden = !!me.email;
     renderThemeChips(getItem('pb_theme') || 'system');
-    $('menu-install').hidden = !installEvt;
-    $('menu-install-note').hidden = !(isIOS() && !isStandalone());
+    $('menu-install').hidden = isStandalone();
+    $('menu-install-note').hidden = true;
     openSheet('menu-sheet');
   }
   $('menu-close').addEventListener('click', function () { closeSheets(); });
@@ -414,12 +414,20 @@
   var installEvt = null;
   function isIOS() { return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
   function isStandalone() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; $('menu-install').hidden = false; });
-  window.addEventListener('appinstalled', function () { installEvt = null; $('menu-install').hidden = true; toast('Phrasebook sudah terpasang di layar utama.'); });
+  // Chrome sends beforeinstallprompt only when it decides (often after some use of the site); without it, the button shows how to install by hand.
+  function installSteps() {
+    var ua = navigator.userAgent;
+    if (/Instagram|FBAN|FBAV|TikTok|Line\/|WhatsApp/i.test(ua)) return 'Buka link ini di Chrome atau Safari dulu, lalu pasang dari sana.';
+    if (isIOS()) return 'Di iPhone/iPad: buka di Safari, ketuk tombol Bagikan, lalu pilih "Tambah ke Layar Utama".';
+    if (/Android/i.test(ua)) return 'Di Chrome: ketuk menu ⋮ di kanan atas, lalu pilih "Instal aplikasi" atau "Tambahkan ke layar utama".';
+    return 'Di Chrome atau Edge: klik ikon pasang di ujung kanan kolom alamat, atau buka menu ⋮ lalu "Transmisikan, simpan, dan bagikan" > "Instal halaman sebagai aplikasi".';
+  }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+  window.addEventListener('appinstalled', function () { installEvt = null; $('menu-install').hidden = true; $('menu-install-note').hidden = true; toast('Phrasebook sudah terpasang di layar utama.'); });
   $('menu-install').addEventListener('click', function () {
-    if (!installEvt) return;
+    if (!installEvt) { $('menu-install-note').textContent = installSteps(); $('menu-install-note').hidden = false; return; }
     installEvt.prompt();
-    installEvt.userChoice.then(function () { installEvt = null; $('menu-install').hidden = true; }, function () { /* ignore */ });
+    installEvt.userChoice.then(function () { installEvt = null; }, function () { /* ignore */ });
   });
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () { /* the app works without it */ }); });
