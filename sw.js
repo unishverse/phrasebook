@@ -4,13 +4,13 @@
    - page, css and js: network first (3 s), cached copy as fallback, so a deploy reaches users at once
    - img/*: cache first (bump VERSION when an image changes)
    - Google Fonts: stale while revalidate */
-var VERSION = 'pb-sw-2';
+var VERSION = 'pb-sw-3';
 var SHELL = VERSION + '-shell', FILES = VERSION + '-files';
 var SHELL_URLS = ['./', 'index.html', 'css/app.css', 'js/config.js', 'js/content.js', 'js/app.js', 'js/account.js', 'manifest.webmanifest',
   'img/icon-192.png', 'img/icon-512.png', 'img/favicon-48.png'];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(SHELL).then(function (c) { return c.addAll(SHELL_URLS); }).catch(function () { /* filled on use */ }).then(function () { return self.skipWaiting(); }));
+  e.waitUntil(caches.open(SHELL).then(function (c) { return c.addAll(SHELL_URLS.map(function (u) { return new Request(u, { cache: 'reload' }); })); }).catch(function () { /* filled on use */ }).then(function () { return self.skipWaiting(); }));
 });
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
@@ -29,7 +29,8 @@ function networkFirst(req) {
     var timer = setTimeout(function () {
       fallback().then(function (hit) { if (hit && !settled) { settled = true; resolve(hit); } });
     }, 3000);
-    fetch(req).then(function (res) {
+    // no-cache: always ask GitHub Pages (cheap ETag check) instead of the browser's 10-minute HTTP cache
+    fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).then(function (res) {
       clearTimeout(timer);
       if (res && res.ok) { var copy = res.clone(); caches.open(SHELL).then(function (c) { c.put(req, copy); }); }
       if (!settled) { settled = true; resolve(res); }
