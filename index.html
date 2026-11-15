@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ECEEE9" id="theme-color">
+<script>/* theme before first paint: pb_theme = system (default) | light | dark */
+try { (function () { var p = localStorage.getItem('pb_theme'); if (p === 'light' || p === 'dark') document.documentElement.setAttribute('data-theme', p);
+  var dark = p === 'dark' || (p !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.getElementById('theme-color').setAttribute('content', dark ? '#111311' : '#ECEEE9'); })(); } catch (e) { /* follow the system */ }</script>
+<title>The Teacher’s Phrasebook</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="icon" type="image/png" sizes="48x48" href="img/favicon-48.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Phrasebook">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="Practical English for everyday teaching: classroom phrases, notes and example dialogues for English teachers. Gratis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="gate" id="gate">
+
+  <!-- Welcome -->
+  <section id="landing" class="split" aria-labelledby="landing-title">
+    <div class="stack" style="gap:18px">
+      <div class="logo-row"><img src="img/icon-192.png" width="40" height="40" alt="">The Teacher’s Phrasebook</div>
+      <div class="hero-ill" id="landing-ill" aria-hidden="true"></div>
+    </div>
+    <div class="stack" style="gap:16px">
+      <h1 id="landing-title">Practical English for <em>everyday teaching.</em></h1>
+      <p class="lead">Frasa kelas, catatan bahasa, dan contoh dialog untuk guru bahasa Inggris. Gratis untuk semua guru.</p>
+      <button class="btn" type="button" id="open-btn">Mulai</button>
+      <button class="linkbtn" type="button" data-privacy>Privasi</button>
+    </div>
+  </section>
+
+  <!-- Restoring a saved session -->
+  <section id="restore" hidden aria-live="polite">
+    <div class="restore">
+      <span class="spinner" id="restore-spin" aria-hidden="true"></span>
+      <p id="restore-text">Membuka Phrasebook Anda…</p>
+      <div class="stack" id="restore-actions" hidden style="width:100%;max-width:360px">
+        <button class="btn" type="button" id="restore-retry">Coba lagi</button>
+        <button class="btn btn--ghost" type="button" id="restore-other">Masuk dengan akun lain</button>
+      </div>
+    </div>
+  </section>
+  <script>try { if (localStorage.getItem('pb_token')) { document.getElementById('landing').hidden = true; document.getElementById('restore').hidden = false; } } catch (e) { /* no storage */ }</script>
+
+  <!-- Sign in / sign up -->
+  <section id="signin" hidden aria-labelledby="signin-title">
+    <div class="topbar">
+      <button class="roundbtn" type="button" id="signin-back" aria-label="Kembali">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+    </div>
+    <div class="stack" style="max-width:460px;width:100%;margin:0 auto;gap:14px">
+      <h1 id="signin-title" style="font-size:32px">Masuk</h1>
+      <p class="note" id="signin-sub">Masukkan email Anda. Pengguna baru? Tulis email lalu tekan Daftar gratis.</p>
+
+      <form id="email-form" class="stack" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" type="email" inputmode="email" autocomplete="email" placeholder="nama@email.com" required>
+        </div>
+        <button class="btn btn--dark" type="button" id="to-password">Masuk dengan password</button>
+        <button class="btn btn--ghost" type="submit" id="send-btn">Kirim kode ke email</button>
+        <button class="btn" type="button" id="signup-btn">Daftar gratis</button>
+        <button class="linkbtn" type="button" id="to-username">Tidak mau pakai email? Daftar dengan username</button>
+      </form>
+
+      <form id="username-form" class="stack" novalidate hidden>
+        <div class="field">
+          <label for="uname">Username</label>
+          <input class="input" id="uname" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="21" placeholder="mis. bu_rina" required>
+          <p class="note">3–20 karakter: huruf kecil, angka, titik atau garis bawah, diawali huruf.</p>
+        </div>
+        <div class="field">
+          <label for="uname-pw">Password (minimal 8 karakter)</label>
+          <input class="input" id="uname-pw" type="password" autocomplete="new-password" minlength="8" required>
+        </div>
+        <p class="note">Ingat password Anda. Tanpa email, password tidak bisa direset sendiri (nanti bisa menambahkan email di menu Akun).</p>
+        <button class="btn" type="submit" id="uname-btn">Buat akun</button>
+        <button class="linkbtn" type="button" id="uname-back">Daftar dengan email</button>
+      </form>
+
+      <form id="code-form" class="stack" novalidate hidden>
+        <p class="note" id="code-note"></p>
+        <div class="field">
+          <label for="code">Kode 6 angka</label>
+          <input class="input input--code" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required>
+        </div>
+        <button class="btn" type="submit" id="verify-btn">Masuk</button>
+        <button class="linkbtn" type="button" id="resend-btn">Kirim ulang kode</button>
+        <button class="linkbtn" type="button" id="change-email">Ganti email</button>
+      </form>
+
+      <form id="password-form" class="stack" novalidate hidden>
+        <div class="field">
+          <label for="pw-login">Email atau username</label>
+          <input class="input" id="pw-login" type="text" inputmode="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="nama@email.com atau username" required>
+        </div>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input class="input" id="pw" type="password" autocomplete="current-password" required>
+        </div>
+        <button class="btn" type="submit" id="pw-btn">Masuk</button>
+        <button class="linkbtn" type="button" id="to-code">Masuk dengan kode email</button>
+      </form>
+
+      <div class="msg" id="signin-msg" role="status" hidden></div>
+      <button class="linkbtn" type="button" data-privacy>Privasi</button>
+    </div>
+  </section>
+
+  <!-- Privacy (before sign-in) -->
+  <section id="gate-privacy" hidden aria-label="Privasi">
+    <div class="topbar">
+      <button class="roundbtn" type="button" id="privacy-back" aria-label="Kembali">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+    </div>
+    <div class="prose" id="gate-privacy-body" style="max-width:640px"></div>
+  </section>
+</div>
+
+<main class="app" id="app" hidden aria-live="polite"></main>
+
+<div class="bottom" id="bottom" hidden>
+  <nav class="nav" aria-label="Menu utama">
+    <button data-nav="home"><span class="ib"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9l7-6 7 6v8a1 1 0 01-1 1h-4v-5H8v5H4a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg></span><span class="nl">Beranda</span></button>
+    <button data-nav="units"><span class="ib"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 4.5c2.5-1 5-1 8 1 3-2 5.5-2 8-1v11c-2.5-1-5-1-8 1-3-2-5.5-2-8-1z M10 5.5v11" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg></span><span class="nl">Unit</span></button>
+    <button data-nav="search"><span class="ib"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nl">Cari</span></button>
+    <button data-nav="saved"><span class="ib"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.5h10v15l-5-3.5-5 3.5z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg></span><span class="nl">Tersimpan</span></button>
+    <button data-nav="about"><span class="ib"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M10 9v5M10 6v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="nl">Panduan</span></button>
+  </nav>
+</div>
+
+<!-- Account -->
+<div class="sheet" id="menu-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="menu-title">
+  <div class="sheet-card">
+    <h2 id="menu-title">Akun</h2>
+    <div class="acct-who"><span class="avatar" id="menu-avatar" aria-hidden="true"></span><span><b id="menu-name"></b><span class="note" id="menu-login"></span></span></div>
+    <div class="field">
+      <span class="label" id="theme-label">Tampilan</span>
+      <div class="chips" id="theme-chips" role="group" aria-labelledby="theme-label"></div>
+    </div>
+    <button class="btn btn--ghost" type="button" id="menu-install" hidden>Pasang ke layar utama</button>
+    <p class="note" id="menu-install-note" hidden>Di iPhone: buka di Safari, ketuk tombol Bagikan, lalu pilih "Tambah ke Layar Utama".</p>
+    <button class="btn btn--ghost" type="button" id="menu-add-email" hidden>Tambah email</button>
+    <button class="btn btn--ghost" type="button" id="menu-password">Atur password</button>
+    <button class="btn btn--ghost" type="button" id="menu-logout">Keluar</button>
+    <button class="linkbtn" type="button" id="menu-privacy">Privasi</button>
+    <button class="btn" type="button" id="menu-close">Tutup</button>
+  </div>
+</div>
+
+<!-- Set password -->
+<div class="sheet" id="pw-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="pw-sheet-title">
+  <form class="sheet-card" id="setpw-form" novalidate>
+    <h2 id="pw-sheet-title">Buat password?</h2>
+    <p class="note" id="pw-sheet-note">Agar lain kali bisa langsung masuk tanpa menunggu kode email.</p>
+    <div class="field" id="current-pw-field" hidden>
+      <label for="current-pw">Password lama</label>
+      <input class="input" id="current-pw" type="password" autocomplete="current-password">
+    </div>
+    <div class="field">
+      <label for="new-pw">Password baru (minimal 8 karakter)</label>
+      <input class="input" id="new-pw" type="password" autocomplete="new-password" minlength="8" required>
+    </div>
+    <div class="msg msg--error" id="setpw-msg" role="alert" hidden></div>
+    <button class="btn" type="submit" id="setpw-btn">Simpan password</button>
+    <button class="btn btn--ghost" type="button" id="setpw-skip">Nanti saja</button>
+  </form>
+</div>
+
+<!-- Add an email (username accounts) -->
+<div class="sheet" id="email-sheet" hidden role="dialog" aria-modal="true" aria-labelledby="email-sheet-title">
+  <div class="sheet-card">
+    <h2 id="email-sheet-title">Amankan akun Anda</h2>
+    <p class="note">Tambahkan email agar tetap bisa masuk jika lupa password atau ganti HP. Hanya untuk kode masuk, bukan untuk promosi.</p>
+    <form id="addemail-form" class="stack" novalidate>
+      <div class="field">
+        <label for="add-email">Email</label>
+        <input class="input" id="add-email" type="email" inputmode="email" autocomplete="email" placeholder="nama@email.com" required>
+      </div>
+      <button class="btn" type="submit" id="addemail-btn">Kirim kode</button>
+    </form>
+    <form id="addcode-form" class="stack" novalidate hidden>
+      <div class="field">
+        <label for="add-code">Kode 6 angka</label>
+        <input class="input input--code" id="add-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required>
+      </div>
+      <button class="btn" type="submit" id="addcode-btn">Simpan email</button>
+      <button class="linkbtn" type="button" id="addcode-change">Ganti email</button>
+    </form>
+    <div class="msg msg--error" id="addemail-msg" role="alert" hidden></div>
+    <button class="btn btn--ghost" type="button" id="email-sheet-close">Nanti saja</button>
+  </div>
+</div>
+
+<div id="toast" role="status"></div>
+
+<template id="privacy-tpl">
+  <div class="privacy-doc stack" style="gap:12px">
+    <h3>Privasi</h3>
+    <p>Singkatnya: The Teacher’s Phrasebook hanya menyimpan yang dibutuhkan agar akun dan frasa tersimpan Anda bisa dibuka di perangkat mana pun.</p>
+    <h3>Yang disimpan</h3>
+    <ul>
+      <li>Email atau username, untuk masuk dan mengirim kode masuk.</li>
+      <li>Password, jika Anda membuatnya. Disimpan sebagai sidik acak (hash), tidak bisa dibaca siapa pun.</li>
+      <li>Frasa yang Anda simpan, topik yang sudah Anda buka, bagian yang sudah Anda baca, serta pilihan level, bahasa, dan tampilan.</li>
+    </ul>
+    <h3>Yang tidak dilakukan</h3>
+    <ul>
+      <li>Data Anda tidak ditampilkan ke pengguna lain, tidak dijual, dan tidak dipakai untuk iklan.</li>
+      <li>Email hanya dipakai untuk kode masuk, bukan untuk promosi.</li>
+    </ul>
+    <h3>Layanan yang dipakai</h3>
+    <ul>
+      <li>Google (Apps Script, Google Sheets, email) untuk menyimpan data dan mengirim kode masuk.</li>
+      <li>GitHub Pages untuk halaman aplikasi, dan Google Fonts untuk huruf.</li>
+      <li>Suara pada tombol speaker berasal dari browser atau HP Anda sendiri; teksnya tidak dikirim ke kami.</li>
+    </ul>
+    <h3>Menghapus akun</h3>
+    <p>Ingin akun dan semua data Anda dihapus? Kirim DM ke @dnshlutfiii di Instagram dari akun yang bisa kami cocokkan dengan email atau username Anda.</p>
+  </div>
+</template>
+
+<script src="js/config.js"></script>
+<script src="js/content.js"></script>
+<script src="js/app.js"></script>
+<script src="js/account.js"></script>
+</body>
+</html>

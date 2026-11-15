@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "The Teacher’s Phrasebook",
+  "short_name": "Phrasebook",
+  "description": "Practical English for everyday teaching: classroom phrases, notes and example dialogues for English teachers.",
+  "lang": "id",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ECEEE9",
+  "theme_color": "#ECEEE9",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
